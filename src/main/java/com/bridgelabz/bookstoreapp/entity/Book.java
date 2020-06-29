@@ -1,9 +1,12 @@
 package com.bridgelabz.bookstoreapp.entity;
 
+import org.springframework.data.redis.core.RedisHash;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class Book {
+public class Book implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -14,8 +17,17 @@ public class Book {
     private int price;
     @Column(length = 2000)
     private String description;
+    private int quantity;
 
     public Book() {
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public int getId() {
@@ -64,6 +76,18 @@ public class Book {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", author='" + author + '\'' +
+                ", nameOfBook='" + nameOfBook + '\'' +
+                ", picPath='" + picPath + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                '}';
     }
 }
 

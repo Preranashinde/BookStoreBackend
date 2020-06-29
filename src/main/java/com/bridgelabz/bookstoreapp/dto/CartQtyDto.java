@@ -1,31 +1,34 @@
 package com.bridgelabz.bookstoreapp.dto;
 
-public class BookDto {
+import java.io.Serializable;
 
+public class CartQtyDto implements Serializable {
+
+    private int id;
     private String author;
     private String nameOfBook;
     private String picPath;
     private int price;
-    private String description;
-    private String quantity;
+    private int bookQuantity;
 
-    public BookDto() {
-    }
-
-    public BookDto(String author, String nameOfBook, String picPath, int price, String description) {
+    public CartQtyDto(int id, String author, String nameOfBook, String picPath, int price, int bookQuantity) {
+        this.id = id;
         this.author = author;
         this.nameOfBook = nameOfBook;
         this.picPath = picPath;
         this.price = price;
-        this.description = description;
+        this.bookQuantity = bookQuantity;
     }
 
-    public String getQuantity() {
-        return quantity;
+    public CartQtyDto() {
     }
 
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getAuthor() {
@@ -60,11 +63,11 @@ public class BookDto {
         this.price = price;
     }
 
-    public String getDescription() {
-        return description;
+    public int getBookQuantity() {
+        return bookQuantity;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBookQuantity(int bookQuantity) {
+        this.bookQuantity = bookQuantity;
     }
 }

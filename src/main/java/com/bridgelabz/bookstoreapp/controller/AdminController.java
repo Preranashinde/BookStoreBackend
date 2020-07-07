@@ -11,14 +11,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/home/admin")
-//@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     @Autowired
     private IBookStoreService iBookStoreService;
 
     @GetMapping("/loadcsv")
-    public String loadCSVData() {
+    public String loadCSVData(@RequestHeader String Authorization) {
         iBookStoreService.loadBookData();
         return "CSV loaded successfully";
     }
@@ -29,7 +29,7 @@ public class AdminController {
     }
 
     @PostMapping("/uploadcsv")
-    public ResponseEntity<String> uploadCsvData(@RequestParam("multipartFile") MultipartFile multipartFile ) {
+    public ResponseEntity<String> uploadCsvData(@RequestParam("multipartFile") MultipartFile multipartFile, @RequestHeader String Authorization ) {
         return new ResponseEntity(iBookStoreService.fetchBookData(multipartFile), HttpStatus.ACCEPTED);
 
 

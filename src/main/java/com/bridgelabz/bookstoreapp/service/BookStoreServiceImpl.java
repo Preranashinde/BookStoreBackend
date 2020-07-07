@@ -34,7 +34,7 @@ public class BookStoreServiceImpl implements IBookStoreService {
     private UserRepository userRepository;
 
     @Autowired
-    IElasticsearchService iElasticsearchService;
+    IElasticsearchService elasticsearchService;
 
     @Autowired
     private Environment environment;
@@ -50,13 +50,13 @@ public class BookStoreServiceImpl implements IBookStoreService {
                 Book book = new Book();
                 book.setAuthor(data[1].replaceAll("'", ""));
                 book.setNameOfBook(data[2].replaceAll("'", ""));
-                //book.setQuantity(Integer.parseInt(data[3].replaceAll("'", "")));
-                book.setPicPath(data[3].replaceAll("'", ""));
-                book.setPrice(Integer.parseInt(data[4].replaceAll("'", "")));
+                book.setQuantity(Integer.parseInt(data[3].replaceAll("'", "")));
+                book.setPicPath(data[4].replaceAll("'", ""));
+                book.setPrice(Integer.parseInt(data[5].replaceAll("'", "")));
                 //IntStream.range(6, data.length - 1).forEach(column -> data[7] += "," + data[column]);
-                book.setDescription(data[5]);
-                Book books = bookStoreRepository.save(book);
-                iElasticsearchService.createBook(books);
+                book.setDescription(data[6]);
+                bookStoreRepository.save(book);
+                elasticsearchService.createBook(book);
 
             }
         } catch (IOException e) {
@@ -67,6 +67,7 @@ public class BookStoreServiceImpl implements IBookStoreService {
 
     @Override
     public Page<Book> getAllBook(Pageable pageable) {
+
         return bookStoreRepository.findAll(pageable);
     }
 
@@ -125,21 +126,15 @@ public class BookStoreServiceImpl implements IBookStoreService {
     }
 
     @Override
-    public List<Book> getAll() {
-        return bookStoreRepository.findAll();
+    public List<Book> getAll(Pageable pageable) {
+        return (List<Book>) bookStoreRepository.findAll();
     }
 
     @Override
-    public List<Book> searchBooks(String searchText) {
+    public List<Book> searchBooks(String searchText) throws IOException {
         List<Book> searchList = new ArrayList<>();
-        List<Book> bookList = bookStoreRepository.findAll();
-        for (int book = 0; book < bookList.size(); book++) {
-            if (bookList.get(book).getAuthor().toLowerCase().contains(searchText.toLowerCase()) ||
-                    bookList.get(book).getNameOfBook().toLowerCase().contains(searchText.toLowerCase())) {
-                searchList.add(bookList.get(book));
-            }
-        }
+        searchList = elasticsearchService.searchBook(searchText);
         return searchList;
     }
+   }
 
-}

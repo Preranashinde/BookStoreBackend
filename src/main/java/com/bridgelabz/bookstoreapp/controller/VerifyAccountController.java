@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -35,23 +36,23 @@ public class VerifyAccountController {
 
     @Cacheable(value = "Book")
     @GetMapping("/all")
-    public List<Book> getAllBook() {
+    public List<Book> getAllBook(@PageableDefault(page = 0, size = 10) Pageable pageable) {
         System.out.println(environment.getProperty("ALL_BOOKS"));
-        return iBookStoreService.getAll();
+        return iBookStoreService.getAll(pageable);
     }
 
     @GetMapping("/sort-asc/price")
-    public ResponseEntity<Page<Book>> booksInAscendingOrderByPrice(@PageableDefault(page = 0, size = 10) Pageable pageable) {
+    public ResponseEntity<Page<Book>> booksInAscendingOrderByPrice(@PageableDefault(page = 0, size = 8)  Pageable pageable) {
         return new ResponseEntity(iBookStoreService.getAllBookByPriceAsc(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/sort-desc/price")
-    public ResponseEntity<Page<Book>> booksInDescendingOrderByPrice(@PageableDefault(page = 0, size = 20) Pageable pageable) {
+    public ResponseEntity<Page<Book>> booksInDescendingOrderByPrice(@PageableDefault(page = 0, size = 8) Pageable pageable) {
         return new ResponseEntity(iBookStoreService.getAllBookByPriceDesc(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/searchbooks/{searchText}")
-    public ResponseEntity<List<Book>> searchBooks(@PathVariable String searchText) {
+    public ResponseEntity<List<Book>> searchBooks(@PathVariable String searchText) throws IOException {
         return new ResponseEntity(iBookStoreService.searchBooks(searchText), HttpStatus.OK);
     }
 }

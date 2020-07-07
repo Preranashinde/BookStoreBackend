@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.annotations.Api;
 
 import java.util.List;
 
@@ -26,8 +27,7 @@ public class CartController {
 
     //    @CacheEvict(value = "Book", key = "#cartDto.userId")
     @PutMapping("/add")
-    public String addToCart(@RequestBody CartDto cartDto, @RequestHeader String token) throws BookStoreException {
-//        System.out.println(token);
+    public String addToCart(@RequestBody CartDto cartDto, @RequestHeader String token) throws BookStoreException {      
         System.out.println("Updating records");
         return iCartService.addToCart(cartDto, token);
     }
@@ -41,7 +41,6 @@ public class CartController {
     //    @Cacheable(value = "Book", key = "#userId")
     @GetMapping("/getall")
     public List<CartQtyDto> getall(@RequestHeader String token) {
-//        System.out.println(Authorization);
         System.out.println("getting books from cart");
         return iCartService.getCartBooks(token);
     }
@@ -49,5 +48,10 @@ public class CartController {
     @GetMapping("/orderplaced/orderid")
     public ResponseEntity<Integer> getOrderId(@RequestHeader String token) throws BookStoreException {
         return new ResponseEntity<Integer>(iCartService.getOrderId(token), HttpStatus.OK);
+    }
+
+    @GetMapping("/getorderid")
+    public ResponseEntity<Integer> getPlacedOrderId(@RequestHeader String token) throws BookStoreException {
+        return new ResponseEntity<Integer>(iCartService.getPlaceOrderId(token), HttpStatus.OK);
     }
 }

@@ -15,5 +15,6 @@ public interface ICartService {
 
     List<CartQtyDto> getCartBooks(String token);
 
-    Integer getOrderId(String token) throws BookStoreException;
+    public Integer getOrderId(String token) throws BookStoreException;
+    Integer getPlaceOrderId(String token) throws BookStoreException;
 }

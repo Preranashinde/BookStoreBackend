@@ -94,12 +94,14 @@ public class CartServiceImpl implements ICartService {
                 for (Cart cart : allByUsername) {
                     if (cart.getBookQuantity() == 0)
                         cartRepository.deleteCartByBookIdAndUsername(cart.getBookId(), cart.getUsername());
-                    cartQtyDto.add(new CartQtyDto(bookStoreRepository.findById(cart.getBookId()).getId(),
-                            bookStoreRepository.findById(cart.getBookId()).getAuthor(),
-                            bookStoreRepository.findById(cart.getBookId()).getNameOfBook(),
-                            bookStoreRepository.findById(cart.getBookId()).getPicPath(),
-                            bookStoreRepository.findById(cart.getBookId()).getPrice(),
-                            cartRepository.findByBookIdAndUsername(cart.getBookId(), cart.getUsername()).getBookQuantity()));
+                    else {
+                        cartQtyDto.add(new CartQtyDto(bookStoreRepository.findById(cart.getBookId()).getId(),
+                                bookStoreRepository.findById(cart.getBookId()).getAuthor(),
+                                bookStoreRepository.findById(cart.getBookId()).getNameOfBook(),
+                                bookStoreRepository.findById(cart.getBookId()).getPicPath(),
+                                bookStoreRepository.findById(cart.getBookId()).getPrice(),
+                                cartRepository.findByBookIdAndUsername(cart.getBookId(), cart.getUsername()).getBookQuantity()));
+                    }
                 }
             }
         } catch (NullPointerException e) {
@@ -146,9 +148,18 @@ public class CartServiceImpl implements ICartService {
             throw new BookStoreException(BookStoreException.ExceptionType.JWT_NOT_VALID, environment.getProperty("JWT_NOT_VALID"));
     }
 
+    @Override
+    public Integer getPlaceOrderId(String token) throws BookStoreException {
+        if (jwtUtils.validateJwtToken(token)) {
+            OrderNumber firstByOrderByIdDesc = orderNumberRepository.findFirstByOrderByIdDesc();
+            return firstByOrderByIdDesc.getOrderId();
+        }else
+            throw new BookStoreException(BookStoreException.ExceptionType.JWT_NOT_VALID, environment.getProperty("JWT_NOT_VALID"));
+    }
+
     private void sendEmailWithOrderDetails(String email, int orderId) {
         emailDto.setTo(email);
-        emailDto.setFrom("${EMAIL}");
+        emailDto.setFrom("preranapshinde3009@gmail.com");
         emailDto.setSubject(environment.getProperty("ORDER_PLACED"));
         emailDto.setBody("Thank you for placing order with us, your order id is " + orderId + " (: Happy reading :)");
         rabbitMq.sendMessageToQueue(emailDto);

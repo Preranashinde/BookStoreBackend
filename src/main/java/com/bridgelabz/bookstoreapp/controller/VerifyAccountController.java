@@ -5,6 +5,7 @@ import com.bridgelabz.bookstoreapp.repository.UserRepository;
 import com.bridgelabz.bookstoreapp.service.IBookStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequestMapping("/verifyaccount")
 @CrossOrigin(value = "*")
 @PropertySource("classpath:message.properties")
+@Profile("dev")
 public class VerifyAccountController {
 
     @Autowired

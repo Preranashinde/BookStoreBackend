@@ -64,17 +64,17 @@ public class WishlistServiceImpl implements IWishlistService {
     }
 
     @Override
-    public List<Book> getAllBooksList(String token) throws BookStoreException {
+        public List<Book> getAllBooksList(String token) {
+            List<Book> wishlistBooks = new ArrayList<>();
         if (jwtUtils.validateJwtToken(token)) {
             String username = jwtUtils.getUserNameFromJwtToken(token);
-            List<Book> wishlistBooks = new ArrayList<>();
+
             List<Wishlist> allByUsername = wishlistRepository.findAllByUsername(username);
             for (Wishlist wishlist : allByUsername) {
                 wishlistBooks.add(bookStoreRepository.findById(wishlist.getBookId()));
             }
+        }
             return wishlistBooks;
-        }  else
-            throw new BookStoreException(BookStoreException.ExceptionType.JWT_NOT_VALID, environment.getProperty("JWT_NOT_VALID"));
 
     }
 }

@@ -1,11 +1,15 @@
 package com.bridgelabz.bookstoreapp.service;
 
 import com.bridgelabz.bookstoreapp.entity.Book;
+import com.bridgelabz.bookstoreapp.repository.BookStoreRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -27,13 +31,16 @@ import java.util.Map;
 public class ElasticsearchServiceImpl implements IElasticsearchService {
 
     String INDEX = "bookstore";
-    String TYPE = "book";
+    private static final String TYPE = "_doc";
 
     @Autowired
     private RestHighLevelClient client;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private BookStoreRepository bookStoreRepository;
 
     @Autowired
     private Gson gson;
@@ -90,5 +97,31 @@ public class ElasticsearchServiceImpl implements IElasticsearchService {
                     );
         }
         return books;
+    }
+
+    // Method to UPDATE the Book Data on ElasticSearch Server by its BookId
+    @Override
+    public Book updateBook(int id, Book book) throws IOException {
+
+        Map<String, Object> bookMap = objectMapper.convertValue(book, Map.class);
+
+        UpdateRequest updateRequest = new UpdateRequest(INDEX,String.valueOf(book.getId()));
+
+        updateRequest.doc(bookMap);
+
+        client.update(updateRequest,RequestOptions.DEFAULT);
+
+        return book;
+    }
+
+    // Method to DELETE Book by its BookId
+    @Override
+    public String deleteBook(int id) throws IOException {
+
+        DeleteRequest deleteRequest = new DeleteRequest(INDEX,String.valueOf(id));
+
+        DeleteResponse response = client.delete(deleteRequest,RequestOptions.DEFAULT);
+
+        return response.getResult().name();
     }
 }

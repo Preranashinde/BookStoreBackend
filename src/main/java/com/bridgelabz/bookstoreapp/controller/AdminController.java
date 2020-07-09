@@ -10,10 +10,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/home/admin")
-@PreAuthorize("hasRole('ADMIN')")
-@Profile("prod")
+//@PreAuthorize("hasRole('ADMIN')")
+//@Profile("prod")
 public class AdminController {
 
     @Autowired
@@ -26,14 +28,22 @@ public class AdminController {
     }
 
     @PostMapping("/addbook")
-    public ResponseEntity addNewBook(@RequestBody BookDto bookDto, @RequestHeader String Authorization) {
+    public ResponseEntity addNewBook(@RequestBody BookDto bookDto, @RequestHeader String Authorization) throws IOException {
         return new ResponseEntity(iBookStoreService.addNewBook(bookDto), HttpStatus.CREATED);
     }
 
     @PostMapping("/uploadcsv")
-    public ResponseEntity<String> uploadCsvData(@RequestParam("multipartFile") MultipartFile multipartFile, @RequestHeader String Authorization ) {
+    public ResponseEntity<String> uploadCsvData(@RequestParam("multipartFile") MultipartFile multipartFile, @RequestHeader String Authorization) {
         return new ResponseEntity(iBookStoreService.fetchBookData(multipartFile), HttpStatus.ACCEPTED);
+    }
 
+    @PutMapping("/updateBook/{id}")
+    public ResponseEntity<String> updateBook(@PathVariable int id, @RequestBody BookDto bookDto) throws IOException {
+        return new ResponseEntity<>(iBookStoreService.updateBook(id, bookDto), HttpStatus.OK);
+    }
 
+    @DeleteMapping("/deleteBook/{id}")
+    public ResponseEntity<String> deleteBook(@PathVariable int id) throws IOException {
+        return new ResponseEntity<>(iBookStoreService.deleteBook(id), HttpStatus.OK);
     }
 }

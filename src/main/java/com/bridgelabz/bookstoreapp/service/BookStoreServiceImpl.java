@@ -12,6 +12,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Service
+@Transactional
 @PropertySource("classpath:message.properties")
 public class BookStoreServiceImpl implements IBookStoreService {
 
@@ -88,10 +90,16 @@ public class BookStoreServiceImpl implements IBookStoreService {
 
     @Override
     public String addNewBook(BookDto bookDto) {
-        Book book = converterService.convertToBookEntity(bookDto);
-        bookStoreRepository.save(book);
-        return environment.getProperty("BOOK_ADDED");
+        try {
+            Book book = converterService.convertToBookEntity(bookDto);
+            bookStoreRepository.save(book);
+            elasticsearchService.createBook(book);
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return environment.getProperty("BOOK_ADDED_SUCCESSFULLY");
     }
+
 
     @Override
     public String fetchBookData(MultipartFile multipartFile) {
@@ -136,5 +144,30 @@ public class BookStoreServiceImpl implements IBookStoreService {
         searchList = elasticsearchService.searchBook(searchText);
         return searchList;
     }
-   }
+
+    @Override
+    public String deleteBook(int id) throws IOException {
+        Book bookFind = bookStoreRepository.findById(id);
+        if (bookFind != null) {
+            bookStoreRepository.deleteById(id);
+            elasticsearchService.deleteBook(id);
+            return environment.getProperty("DELETED_BOOK");
+        }else {
+            return environment.getProperty("BOOK_NOT_FOUND");
+        }
+    }
+
+    public String updateBook(int id, BookDto bookDto) throws IOException {
+        Book book = converterService.convertToBookEntity(bookDto);
+        Optional<Book> bookFind = Optional.ofNullable(bookStoreRepository.findById(id));
+        if (bookFind.isPresent()) {
+            book.setId(id);
+            bookStoreRepository.save(book);
+            elasticsearchService.updateBook(id, book);
+            return environment.getProperty("UPDATED_BOOK");
+        }else {
+            return environment.getProperty("BOOK_NOT_FOUND");
+        }
+    }
+}
 

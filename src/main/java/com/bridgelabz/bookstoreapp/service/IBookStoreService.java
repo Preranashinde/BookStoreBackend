@@ -24,7 +24,7 @@ public interface IBookStoreService {
 
     String fetchBookData(MultipartFile multipartFile);
 
-    String addNewBook(BookDto bookDto);
+    String addNewBook(BookDto bookDto) throws IOException;
 
     String verifyUserAccount(Long userId);
 
@@ -32,4 +32,7 @@ public interface IBookStoreService {
 
     List<Book> searchBooks(String searchText)throws IOException;
 
+    String updateBook(int id, BookDto bookDto) throws IOException;
+
+    String deleteBook(int id) throws IOException;
 }

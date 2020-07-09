@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/verifyaccount")
 @CrossOrigin(value = "*")
 @PropertySource("classpath:message.properties")
-@Profile("dev")
+//@Profile("dev")
 public class VerifyAccountController {
 
     @Autowired

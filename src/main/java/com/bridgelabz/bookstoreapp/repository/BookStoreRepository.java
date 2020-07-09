@@ -21,4 +21,7 @@ public interface BookStoreRepository extends JpaRepository<Book, String>, Paging
 
     @Query("SELECT book FROM Book book WHERE book.author LIKE %:searchText% OR book.nameOfBook LIKE %:searchText%")
     Page<Book> findAllByAuthorContainingOrNameOfBookContaining(String searchText, Pageable pageable);
+
+    void deleteById(int id);
+
 }

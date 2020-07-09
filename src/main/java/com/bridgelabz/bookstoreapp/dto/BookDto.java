@@ -7,7 +7,7 @@ public class BookDto {
     private String picPath;
     private int price;
     private String description;
-    private String quantity;
+    private int quantity;
 
     public BookDto() {
     }
@@ -20,11 +20,11 @@ public class BookDto {
         this.description = description;
     }
 
-    public String getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 

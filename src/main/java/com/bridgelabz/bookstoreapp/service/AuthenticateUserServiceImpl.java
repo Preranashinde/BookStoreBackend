@@ -171,7 +171,7 @@ public class AuthenticateUserServiceImpl implements IAuthenticateUserService {
 
     private void sendEmailToResetPassword(String email, String token) {
         emailDto.setTo(email);
-        emailDto.setFrom("preranapshinde3009@gmail.com");
+        emailDto.setFrom("${EMAIL}");
         emailDto.setSubject(environment.getProperty("WELCOME_HEADER"));
         emailDto.setBody("Please click this link to verify your account " + "http://localhost:3000/passwordset/" + token);
         rabbitMq.sendMessageToQueue(emailDto);
@@ -179,7 +179,7 @@ public class AuthenticateUserServiceImpl implements IAuthenticateUserService {
 
     private void sendEmailToVerify(User user) throws MailException {
         emailDto.setTo(user.getEmail());
-        emailDto.setFrom("preranapshinde3009@gmail.com");
+        emailDto.setFrom("${EMAIL}");
         emailDto.setSubject(environment.getProperty("WELCOME_HEADER"));
         emailDto.setBody("Please click this link to verify your account " + "http://localhost:8080/verifyaccount/" + user.getId());
         rabbitMq.sendMessageToQueue(emailDto);
